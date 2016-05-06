@@ -31,63 +31,56 @@ var SERVER_HEIGHT=10000
 //------------------------------------
 function drawCircle(x,y,r,c){
 
+  //Variables contenant la moitiè des dimensions du canvas du client
 	var half_width_screen = WIDTH/2
 	var half_height_screen = HEIGHT/2
 
+  //Distance entre la position du joueur et le coté gauche de son canvas
   var distance_gauche_x=half_width_screen
 
-  var distance_gauche_y=half_height_screen
+  //Distance entre la position du joueur et le haut de son canvas
+  var distance_haut_y=half_height_screen
 
+  //Distance entre la position du joueur et le coté droit de son canvas
   var distance_droit_x=half_width_screen
 
-  var distance_droit_y=half_height_screen
+  //Distance entre la position du joueur et le bas de son canvas
+  var distance_bas_y=half_height_screen
 
 
+  // Coordonnées du joueur
 	var main_cell_x = environment.players[player_id.player_id].x
 	var main_cell_y = environment.players[player_id.player_id].y
 
+  //valeur absolue de la distance entre le joueur et ce qu'on veut dessiner (food ou un autre joueur)
 	var x_distance = Math.abs(main_cell_x - x)
 	var y_distance = Math.abs(main_cell_y - y)
 
+  //Calcul des distances entre la position du joueur principal et les coordonnées de son canvas
   if (main_cell_x < half_width_screen){
     distance_gauche_x = main_cell_x
     distance_droit_x = (half_width_screen * 2) -distance_gauche_x
   }
 
   if (main_cell_y < half_height_screen){
-    distance_gauche_y = main_cell_y
-    distance_droit_y = (half_height_screen * 2) -distance_gauche_y
+    distance_haut_y = main_cell_y
+    distance_bas_y = (half_height_screen * 2) -distance_haut_y
   }
 
+  if ((SERVER_WIDTH - main_cell_x) < half_width_screen){
+    distance_gauche_x = (half_width_screen * 2) - (SERVER_WIDTH - main_cell_x)
+    distance_droit_x = (SERVER_WIDTH - main_cell_x)
+  }
+
+  if ( (SERVER_HEIGHT - main_cell_y) < half_height_screen){
+    distance_haut_y = (half_height_screen * 2) - (SERVER_HEIGHT - main_cell_y)
+    distance_bas_y = (SERVER_HEIGHT - main_cell_y)
+  }
   var draw_x=0
   var draw_y=0
 
-	 /*if(x_distance > half_width_screen)
-	 	return
-	 else if(y_distance > half_height_screen)
-	 	return
-
-
-	if( (main_cell_x-x)>0 ){
-    		x = distance_gauche_x - x_distance
-        draw_x=1
-  }
-	else{
-      	x = distance_gauche_x + x_distance
-        draw_x=1
-  }
-
-
-
-	if( (main_cell_y-y)>0 ){
-    y = distance_gauche_y - y_distance
-    draw_y=1
-  }
-	else{
-    y = distance_gauche_y + y_distance
-    draw_y=1
-  }*/
-
+  //On vérfie si ce qu'on veut déssiner se trouve dans le champ du canvas du client, afin de
+  // gérer le zoom sur le joueur principal
   if( (main_cell_x-x)>=0 ){
     if ( x_distance <= distance_gauche_x ){
       x = distance_gauche_x - x_distance
@@ -104,17 +97,17 @@ function drawCircle(x,y,r,c){
   }
 
   if( (main_cell_y-y)>=0 ){
-    if ( y_distance <= distance_gauche_y ){
-      y = distance_gauche_y - y_distance
+    if ( y_distance <= distance_haut_y ){
+      y = distance_haut_y - y_distance
     }
-    else if ( y_distance > distance_gauche_y ) return
+    else if ( y_distance > distance_haut_y ) return
   }
 
   if( (main_cell_y-y)<=0 ){
-    if ( y_distance <= distance_droit_y ){
-        y = distance_gauche_y + y_distance
+    if ( y_distance <= distance_bas_y ){
+        y = distance_haut_y + y_distance
     }
-    else if ( y_distance > distance_droit_y ) return
+    else if ( y_distance > distance_bas_y ) return
   }
 
 
